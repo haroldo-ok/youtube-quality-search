@@ -6,9 +6,12 @@ const router = express.Router();
 router.get('/', async (req, res, next) => {
     try {        
         const searchResults = await ytsr('rickroll, this week');
-        const simplifiedSearchResults = searchResults.items
+        const simplifiedSearchResults = searchResults.items        
         .filter(o => (o.uploadedAt || '').indexOf('day') !== -1)
         .map(o => {
+            const daysAgo = parseInt(o.uploadedAt);
+            const quality = 1.0 * o.views / daysAgo;
+
             return {
                 title: o.title,
                 url: o.url,
@@ -21,10 +24,12 @@ router.get('/', async (req, res, next) => {
                 views: o.views,
                 duration: o.duration,
                 uploadedAt: o.uploadedAt,
-                daysAgo: parseInt(o.uploadedAt),
+                daysAgo: daysAgo,
+                quality: quality,
                 original: o
             };
-        });
+        })
+        .sort((a, b) => b.quality - a.quality);
         res.json(simplifiedSearchResults);
     } catch (e) {
         console.error(e);
