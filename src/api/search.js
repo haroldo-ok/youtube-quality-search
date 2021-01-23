@@ -20,10 +20,19 @@ router.get('/', async (req, res, next) => {
         const authorPageContents = await Promise.all(authorURLs
             .map(url => new Promise((resolve, reject) => {
                 console.log('Requesting author URL', url);
-                https.request(url, {timeout: 3000}, res2 => {
-                    console.log('Received author page', url);
-                    resolve(res2);
-                })
+                https.get(url, {timeout: 3000}, res2 => {
+                    console.log('Received author page', url);                    
+
+                    let body = '';
+                    res.on('data', chunk => {
+                        body += chunk;
+                    });
+
+                    resolve(body);
+                }).on('error', err => {
+                    console.error(`Author page ${url} returned an error`, err);
+                    resolve('**ERROR**');
+                });
             })));
 
         console.log('Assembling final results...');
