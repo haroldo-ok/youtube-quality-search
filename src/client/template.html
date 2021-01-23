@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.5/build/pure-min.css" 
         integrity="sha384-LTIDeidl25h2dPxrB2Ekgc9c7sEC3CWGM6HeFmuDNUjX76Ert4Z4IY714dhZHPLd" 
         crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.5/build/grids-responsive-min.css" />
 
 </head>
 
@@ -19,12 +20,38 @@
         <fieldset>
             <legend>Search by quality on Youtube (Experimental)</legend>
             <div class="pure-u-3-5">
-                <input type="text" class="pure-input-1" name="q" placeholder="Search" />
+                <input type="text" class="pure-input-1" name="q" placeholder="Search" value="{{search}}" />
             </div>            
             <div class="pure-u-1-5">
                 <button type="submit" class="pure-button pure-button-primary">Search</button>
             </div>            
         </fieldset>
     </form>
+
+    <div class="pure-g">
+        {{#each items}}
+            <div class="pure-u-1 pure-u-md-1-3">
+                
+                <section class="post">
+                    <header class="post-header">
+                        <img width="48" height="48" alt="Tilo Mitra&#x27;s avatar" class="post-avatar" src="/img/common/tilo-avatar.png">
+
+                        <h2 class="post-title">Introducing Pure</h2>
+
+                        <p class="post-meta">
+                            By <a href="#" class="post-author">Tilo Mitra</a> under <a class="post-category post-category-design" href="#">CSS</a> <a class="post-category post-category-pure" href="#">Pure</a>
+                        </p>
+                    </header>
+
+                    <div class="post-description">
+                        <p>
+                            Yesterday at CSSConf, we launched Pure – a new CSS library. Phew! Here are the <a href="https://speakerdeck.com/tilomitra/pure-bliss">slides from the presentation</a>. Although it looks pretty minimalist, we’ve been working on Pure for several months. After many iterations, we have released Pure as a set of small, responsive, CSS modules that you can use in every web project.
+                        </p>
+                    </div>
+                </section>
+
+            </div>
+        {{/each}}
+    </div>
 </body>
 </html>
