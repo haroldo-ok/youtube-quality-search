@@ -17,7 +17,8 @@ router.get('/', async (req, res, next) => {
         const authorURLs = [...new Set(filteredSearchResults.map(o => o.author.url))];
 
         console.log('Fetching author pages...');
-        const authorPageContents = await Promise.all(authorURLs
+        const countsPerAuthorURL = {};
+        await Promise.all(authorURLs
             .map(url => new Promise(async (resolve, reject) => {
                 console.log('Requesting author URL', url);
                 try {
@@ -25,8 +26,10 @@ router.get('/', async (req, res, next) => {
                     console.log(`Author page ${url} returned an response.`);
                     const body = authorResponse.data;
                     const parts = /subscriberCountText.*?(\d+\.?\d*\w*)/g.exec(body);
-                    console.log("Part found", parts)
-                    resolve(parts ? parts[1] : '???');
+
+                    const countText = parts ? parts[1] : '???';
+                    countsPerAuthorURL[url] = countText;
+                    resolve(countText);
                 } catch (err) {
                     console.error(`Author page ${url} returned an error`, err);
                     console.log('Received author page', url);                    
@@ -37,6 +40,7 @@ router.get('/', async (req, res, next) => {
         console.log('Assembling final results...');
         const simplifiedSearchResults = filteredSearchResults.map(o => {
             const daysAgo = parseInt(o.uploadedAt);
+            const countText = countsPerAuthorURL[o.author.url];
             const quality = 1.0 * o.views / daysAgo;
 
             return {
@@ -45,23 +49,21 @@ router.get('/', async (req, res, next) => {
                 thumbnail: o.bestThumbnail,
                 author: {
                     name: o.author.name || '**Unknown**',
-                    avatar: o.author.bestAvatar
+                    avatar: o.author.bestAvatar,
+                    countText
                 },            
                 description: o.description,
                 views: o.views,
                 duration: o.duration,
                 uploadedAt: o.uploadedAt,
                 daysAgo,
-                quality,
-                original: o
+                quality
             };
         })
         .sort((a, b) => b.quality - a.quality);
 
         res.json({
             search: searchQuery,
-            authorURLs,
-            authorPageContents,
             items: simplifiedSearchResults
         });
     } catch (e) {
