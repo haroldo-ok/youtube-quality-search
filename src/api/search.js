@@ -40,8 +40,17 @@ router.get('/', async (req, res, next) => {
         console.log('Assembling final results...');
         const simplifiedSearchResults = filteredSearchResults.map(o => {
             const daysAgo = parseInt(o.uploadedAt);
-            const countText = countsPerAuthorURL[o.author.url];
-            const quality = 1.0 * o.views / daysAgo;
+
+            const subscribersText = countsPerAuthorURL[o.author.url];
+            const numericPart = parseFloat(subscribersText);
+            const multiplier = subscribersText.indexOf('K') !== -1 ? 1000.0
+                : subscribersText.indexOf('M') !== -1 ? 1000000.0 
+                : subscribersText.indexOf('G') !== -1 ? 1000000000.0 
+                : 1.0;
+            const subscribersCount = isNaN(numericPart) ? -1 : numericPart * multiplier;
+
+            const quality = subscribersCount <= 0 ? 
+                0 : 100.0 * o.views / subscribersCount / daysAgo;
 
             return {
                 title: o.title,
@@ -50,7 +59,8 @@ router.get('/', async (req, res, next) => {
                 author: {
                     name: o.author.name || '**Unknown**',
                     avatar: o.author.bestAvatar,
-                    countText
+                    subscribersText,
+                    subscribersCount
                 },            
                 description: o.description,
                 views: o.views,
