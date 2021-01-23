@@ -9,9 +9,9 @@ router.get('/', async (req, res, next) => {
         const searchQuery = req.query.q || 'rickroll';
 
         const searchResults = await ytsr(`${searchQuery}, this week`);
-        const simplifiedSearchResults = searchResults.items        
-        .filter(o => (o.uploadedAt || '').indexOf('day') !== -1)
-        .map(o => {
+        const filteredSearchResults = searchResults.items        
+            .filter(o => o.author && (o.uploadedAt || '').indexOf('day') !== -1)
+        const simplifiedSearchResults = filteredSearchResults.map(o => {
             const daysAgo = parseInt(o.uploadedAt);
             const quality = 1.0 * o.views / daysAgo;
 
@@ -20,8 +20,8 @@ router.get('/', async (req, res, next) => {
                 url: o.url,
                 thumbnail: o.bestThumbnail,
                 author: {
-                    name: o.author && o.author.name || '**Unknown**',
-                    avatar: o.author && o.author.bestAvatar
+                    name: o.author.name || '**Unknown**',
+                    avatar: o.author.bestAvatar
                 },            
                 description: o.description,
                 views: o.views,
