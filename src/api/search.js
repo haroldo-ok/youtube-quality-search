@@ -1,6 +1,4 @@
 const express = require('express');
-const ytsr = require('ytsr');
-const axios = require('axios');
 const search = require('../common/search');
 
 const router = express.Router();
