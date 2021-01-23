@@ -22,8 +22,11 @@ router.get('/', async (req, res, next) => {
                 console.log('Requesting author URL', url);
                 try {
                     const authorResponse = await axios.get(`${url}?gl=US&hl=en`);
-                    console.error(`Author page ${url} returned an response.`);
-                    resolve(authorResponse.data);
+                    console.log(`Author page ${url} returned an response.`);
+                    const body = authorResponse.data;
+                    const parts = /subscriberCountText.*?(\d+\.?\d*\w*)/g.exec(body);
+                    console.log("Part found", parts)
+                    resolve(parts ? parts[1] : '???');
                 } catch (err) {
                     console.error(`Author page ${url} returned an error`, err);
                     console.log('Received author page', url);                    
