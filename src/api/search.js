@@ -1,5 +1,6 @@
 const express = require('express');
 const ytsr = require('ytsr');
+const http = require("http");
 
 const router = express.Router();
 
@@ -8,9 +9,12 @@ router.get('/', async (req, res, next) => {
         console.log('Params: ', req.query);
         const searchQuery = req.query.q || 'rickroll';
 
-        const searchResults = await ytsr(`${searchQuery}, this week`);
+        const searchResults = await ytsr(`${searchQuery}, 1 month ago`);
         const filteredSearchResults = searchResults.items        
-            .filter(o => o.author && (o.uploadedAt || '').indexOf('day') !== -1)
+            .filter(o => o.author && (o.uploadedAt || '').indexOf('day') !== -1);
+
+        const authorURLs = [...new Set(filteredSearchResults.map(o => o.author.url))];
+
         const simplifiedSearchResults = filteredSearchResults.map(o => {
             const daysAgo = parseInt(o.uploadedAt);
             const quality = 1.0 * o.views / daysAgo;
@@ -27,8 +31,8 @@ router.get('/', async (req, res, next) => {
                 views: o.views,
                 duration: o.duration,
                 uploadedAt: o.uploadedAt,
-                daysAgo: daysAgo,
-                quality: quality,
+                daysAgo,
+                quality,
                 original: o
             };
         })
@@ -36,6 +40,7 @@ router.get('/', async (req, res, next) => {
 
         res.json({
             search: searchQuery,
+            authorURLs,
             items: simplifiedSearchResults
         });
     } catch (e) {
