@@ -4,8 +4,10 @@ const ytsr = require('ytsr');
 const router = express.Router();
 
 router.get('/', async (req, res, next) => {
-    try {        
-        const searchResults = await ytsr('rickroll, this week');
+    try {
+        console.log('Params: ', req.query);
+
+        const searchResults = await ytsr(`${req.query.q || 'rickroll'}, this week`);
         const simplifiedSearchResults = searchResults.items        
         .filter(o => (o.uploadedAt || '').indexOf('day') !== -1)
         .map(o => {
