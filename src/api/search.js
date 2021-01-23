@@ -6,8 +6,9 @@ const router = express.Router();
 router.get('/', async (req, res, next) => {
     try {
         console.log('Params: ', req.query);
+        const searchQuery = req.query.q || 'rickroll';
 
-        const searchResults = await ytsr(`${req.query.q || 'rickroll'}, this week`);
+        const searchResults = await ytsr(`${searchQuery}, this week`);
         const simplifiedSearchResults = searchResults.items        
         .filter(o => (o.uploadedAt || '').indexOf('day') !== -1)
         .map(o => {
@@ -32,7 +33,11 @@ router.get('/', async (req, res, next) => {
             };
         })
         .sort((a, b) => b.quality - a.quality);
-        res.json(simplifiedSearchResults);
+
+        res.json({
+            search: searchQuery,
+            items: simplifiedSearchResults
+        });
     } catch (e) {
         console.error(e);
         next(e);
