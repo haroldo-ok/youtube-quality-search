@@ -21,7 +21,8 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "helmet": "^4.4.1",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "ytsr": "git+https://github.com/haroldo-ok/node-ytsr.git"
   },
   "devDependencies": {
     "eslint": "^7.18.0",
