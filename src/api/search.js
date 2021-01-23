@@ -1,6 +1,6 @@
 const express = require('express');
 const ytsr = require('ytsr');
-const https = require("https");
+const axios = require("axios");
 
 const router = express.Router();
 
@@ -18,21 +18,17 @@ router.get('/', async (req, res, next) => {
 
         console.log('Fetching author pages...');
         const authorPageContents = await Promise.all(authorURLs
-            .map(url => new Promise((resolve, reject) => {
+            .map(url => new Promise(async (resolve, reject) => {
                 console.log('Requesting author URL', url);
-                https.get(url, {timeout: 3000}, res2 => {
-                    console.log('Received author page', url);                    
-
-                    let body = '';
-                    res.on('data', chunk => {
-                        body += chunk;
-                    });
-
-                    resolve(body);
-                }).on('error', err => {
+                try {
+                    const authorResponse = await axios.get(`${url}?gl=US&hl=en`);
+                    console.error(`Author page ${url} returned an response.`);
+                    resolve(authorResponse.data);
+                } catch (err) {
                     console.error(`Author page ${url} returned an error`, err);
+                    console.log('Received author page', url);                    
                     resolve('**ERROR**');
-                });
+                }
             })));
 
         console.log('Assembling final results...');
