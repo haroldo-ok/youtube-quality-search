@@ -12,7 +12,8 @@ router.get('/', async (req, res, next) => {
         console.log('Fetching search results...');
         const searchResults = await ytsr(`${searchQuery}, 1 month ago`);
         const filteredSearchResults = searchResults.items        
-            .filter(o => o.author && (o.uploadedAt || '').indexOf('day') !== -1);
+            .filter(o => o.author && 
+                ((o.uploadedAt || '').indexOf('day') !== -1 || (o.uploadedAt || '').indexOf('week') !== -1));
 
         const authorURLs = [...new Set(filteredSearchResults.map(o => o.author.url))];
 
@@ -39,7 +40,9 @@ router.get('/', async (req, res, next) => {
 
         console.log('Assembling final results...');
         const simplifiedSearchResults = filteredSearchResults.map(o => {
-            const daysAgo = parseInt(o.uploadedAt);
+            const daysAgoNumericPart = parseInt(o.uploadedAt);
+            const daysAgoMultiplier = o.uploadedAt.indexOf('week') !== -1 ? 7 : 1;
+            const daysAgo = daysAgoNumericPart * daysAgoMultiplier;
 
             const subscribersText = countsPerAuthorURL[o.author.url];
             const numericPart = parseFloat(subscribersText);
@@ -74,6 +77,7 @@ router.get('/', async (req, res, next) => {
 
         res.json({
             search: searchQuery,
+            resultCount: simplifiedSearchResults.length,
             items: simplifiedSearchResults
         });
     } catch (e) {
