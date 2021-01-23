@@ -8,6 +8,11 @@ const template = Handlebars.compile(fs.readFileSync(`${__dirname}/template.html`
 
 router.get('/', async (req, res, next) => {
     try {
+        const searchQuery = (req.query.q || '').trim();
+        const results = searchQuery ? 
+            await search.searchOnYoutube(searchQuery) : 
+            ({search: '', items: []});
+            
         res.send(template({}));
     } catch (e) {
         console.error(e);
