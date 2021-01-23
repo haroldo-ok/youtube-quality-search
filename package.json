@@ -1,7 +1,7 @@
 {
-  "name": "express-api-starter",
-  "version": "1.2.0",
-  "description": " A basic starter for an express.js API",
+  "name": "youtube-quality-search",
+  "version": "0.0.1",
+  "description": "Search Youtube videos, ordering by content quality.",
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
@@ -17,11 +17,13 @@
   },
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.21.1",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "helmet": "^4.4.1",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "ytsr": "git+https://github.com/haroldo-ok/node-ytsr.git"
   },
   "devDependencies": {
     "eslint": "^7.18.0",
