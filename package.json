@@ -1,6 +1,6 @@
 {
   "name": "youtube-quality-search",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Search Youtube videos, ordering by content quality.",
   "main": "index.js",
   "scripts": {
