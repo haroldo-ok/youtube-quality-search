@@ -1,0 +1,69 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Search by quality on Youtube (Experimental)</title>
+    <meta name="description" content="Search by quality on Youtube (Experimental)">
+    <meta name="author" content="Haroldo Pinheiro">
+
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.5/build/pure-min.css" 
+        integrity="sha384-LTIDeidl25h2dPxrB2Ekgc9c7sEC3CWGM6HeFmuDNUjX76Ert4Z4IY714dhZHPLd" 
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.5/build/grids-responsive-min.css" />
+
+</head>
+
+<body>
+    <form class="pure-form">
+        <fieldset>
+            <legend>Search by quality on Youtube (Experimental)</legend>
+            <div class="pure-u-3-5">
+                <input type="text" class="pure-input-1" name="q" placeholder="Search" value="{{search}}" />
+            </div>            
+            <div class="pure-u-1-5">
+                <button type="submit" class="pure-button pure-button-primary">Search</button>
+            </div>            
+        </fieldset>
+    </form>
+
+    <div class="pure-g">
+        {{#each items}}
+            <div class="pure-u-1 pure-u-md-1-3">
+
+                <section class="post" style="padding: 1em;">
+                    <a target="_blank" rel="noopener noreferrer" href="{{url}}">
+
+                        <header class="post-header" title="{{title}}">
+                            <h3 class="post-title" 
+                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                                {{title}}
+                            </h3>
+
+                            <img class="post-thumbnail" style="display: block; width: 100%;" alt=""
+                                src="{{thumbnail.url}}" />
+
+                            <p class="post-meta">
+                                By 
+                                <img style="width: 1.5em; height: 1.5em;" alt=""
+                                    class="post-avatar" src="{{author.avatar.url}}">
+                                {{author.name}}, {{author.subscribersText}} subscribers.
+                            </p>
+                            <p class="post-meta">
+                                {{duration}} -- {{views}} views -- {{uploadedAt}}
+                            </p>
+                        </header>
+
+                        <div class="post-description">
+                            <p>{{description}}</p>
+                        </div>
+
+                    </a>
+                </section>
+
+            </div>
+        {{/each}}
+    </div>
+</body>
+</html>
