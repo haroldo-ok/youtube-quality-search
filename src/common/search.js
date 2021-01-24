@@ -3,14 +3,18 @@ const axios = require("axios");
 
 module.exports.searchOnYoutube = async searchQuery => {
     console.log('Fetching search results...');
-    const searchResults = await ytsr(`${searchQuery}, 1 month ago`);
+    const initialFetchTime = new Date().getTime();
+    const searchResults = await ytsr(`${searchQuery}, 1 month ago`, {limit: 300});
     const filteredSearchResults = searchResults.items
         .filter(o => o.author &&
             ((o.uploadedAt || '').indexOf('day') !== -1 || (o.uploadedAt || '').indexOf('week') !== -1));
+    const totalTimeForFetch = new Date().getTime() - initialFetchTime;
+    console.log(`Search results fetched in ${totalTimeForFetch} ms`);
 
     const authorURLs = [...new Set(filteredSearchResults.map(o => o.author.url))];
 
     console.log('Fetching author pages...');
+    const initialAuthorTime = new Date().getTime();
     const countsPerAuthorURL = {};
     await Promise.all(authorURLs
         .map(url => new Promise(async (resolve, reject) => {
@@ -30,7 +34,9 @@ module.exports.searchOnYoutube = async searchQuery => {
                 resolve('**ERROR**');
             }
         })));
-
+    const totalTimeForAuthors = new Date().getTime() - initialFetchTime;
+    console.log(`Author pages fetched in ${totalTimeForAuthors} ms`);
+    
     console.log('Assembling final results...');
     const simplifiedSearchResults = filteredSearchResults.map(o => {
         const daysAgoNumericPart = parseInt(o.uploadedAt);
@@ -71,7 +77,11 @@ module.exports.searchOnYoutube = async searchQuery => {
     const finalResult = {
         search: searchQuery,
         resultCount: simplifiedSearchResults.length,
-        items: simplifiedSearchResults
+        items: simplifiedSearchResults,
+        timing: {
+            searchMillis: totalTimeForFetch,
+            authorsMillis: totalTimeForAuthors
+        }
     };
     return finalResult;
 };
