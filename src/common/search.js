@@ -3,7 +3,7 @@ const axios = require("axios");
 
 module.exports.searchOnYoutube = async searchQuery => {
     console.log('Fetching search results...');
-    const searchResults = await ytsr(`${searchQuery}, 1 month ago`);
+    const searchResults = await ytsr(`${searchQuery}, 1 month ago`, {limit: 300});
     const filteredSearchResults = searchResults.items
         .filter(o => o.author &&
             ((o.uploadedAt || '').indexOf('day') !== -1 || (o.uploadedAt || '').indexOf('week') !== -1));
